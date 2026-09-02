@@ -8,7 +8,7 @@ class Sqldb {
   static Database? _db;
   Future<Database?> get db async{
     if(_db==null){
-      _db= await init_DB();
+      _db= await initDb();
       return _db;
     }
     else{
@@ -16,7 +16,7 @@ class Sqldb {
     }
   }
 
-  init_DB()async{
+  dynamic initDb()async{
     String databasepath= await getDatabasesPath();
     String path=  join(databasepath,'sqflitecourse.db');
     Database mydb= await openDatabase(path,onCreate: _onCreate, version: 1,onUpgrade: _onUpgrade);
