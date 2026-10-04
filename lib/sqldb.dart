@@ -16,7 +16,7 @@ class Sqldb {
     }
   }
 
-  dynamic initDb()async{
+  Future<Database> initDb()async{
     String databasepath= await getDatabasesPath();
     String path=  join(databasepath,'sqflitecourse.db');
     Database mydb= await openDatabase(path,onCreate: _onCreate, version: 1,onUpgrade: _onUpgrade);
@@ -24,15 +24,15 @@ class Sqldb {
   }
 
   dynamic _onUpgrade(Database db,int oldversion,int newversion)async{
-
+   log("_onUpgrade====================================");
   }
 
-  dynamic _onCreate(Database db ,int version)async{
+  void _onCreate(Database db ,int version)async{
     await db.execute(
       '''
       CREATE TABLE "notes"(
-        id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
-        notes TEXT NOT NULL
+        "id" INTEGER PRIMARY KEY  AUTOINCREMENT,
+        "note" TEXT NOT NULL
       )  
       '''     
     );
@@ -40,25 +40,25 @@ class Sqldb {
 
   }
 
-  dynamic readData(String sql) async{
+  Future<List<Map>> readData(String sql) async{
     Database ? mydb=await db;
     List<Map> response = await mydb!.rawQuery(sql);
     return response;
   }
   
-  dynamic insertData(String sql) async{
+  Future<int> insertData(String sql) async{
     Database ? mydb=await db;
     int response = await mydb!.rawInsert(sql);
     return response;
   }
 
-  dynamic updateData(String sql) async{
+  Future<int> updateData(String sql) async{
     Database ? mydb=await db;
     int response = await mydb!.rawUpdate(sql);
     return response;
   }
 
-  dynamic deleteData(String sql) async{
+  Future<int> deleteData(String sql) async{
     Database ? mydb=await db;
     int response = await mydb!.rawDelete(sql);
     return response;
