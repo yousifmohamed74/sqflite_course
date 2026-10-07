@@ -70,4 +70,28 @@ class Sqldb {
     String path=  join(databasepath,'sqflitecourse.db');
     await deleteDatabase(path);
   }
+  //easy functions without sql
+  Future<List<Map>> read(String table) async{
+    Database ? mydb=await db;
+    List<Map> response = await mydb!.query(table);
+    return response;
+  }
+  
+  Future<int> insert(String table,Map<String, Object?> values) async{
+    Database ? mydb=await db;
+    int response = await mydb!.insert(table,values);
+    return response;
+  }
+
+  Future<int> update(String table,Map<String, Object?> values,String? where,) async{
+    Database ? mydb=await db;
+    int response = await mydb!.update(table,values,where: where);
+    return response;
+  }
+
+  Future<int> delete(String table,String? where,) async{
+    Database ? mydb=await db;
+    int response = await mydb!.delete(table,where: where);
+    return response;
+  }
 }

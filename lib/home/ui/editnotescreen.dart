@@ -35,13 +35,21 @@ class _EditnotescreenState extends State<Editnotescreen> {
     if (formKey.currentState!.validate()) {
       String title = titleController.text;
       String note = noteController.text;
-      int response=await sqldb.updateData(
-       """
-        UPDATE notes SET 
-        note ="${noteController.text}", 
-        title="${titleController.text}"
-        WHERE id=${widget.id}
-       """
+      ////way 1
+      // int response=await sqldb.updateData(
+      //  """
+      //   UPDATE notes SET 
+      //   note ="${noteController.text}", 
+      //   title="${titleController.text}"
+      //   WHERE id=${widget.id}
+      //  """
+      // );
+      ////way2
+      int response=await sqldb.update("notes",
+      {"note":note,
+        "title":title
+      },
+      "id=${widget.id}"
       );
       log(response.toString());
       if(response>0){

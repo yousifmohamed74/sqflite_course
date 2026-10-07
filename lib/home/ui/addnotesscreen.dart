@@ -32,11 +32,19 @@ class _AddnotesscreenState extends State<Addnotesscreen> {
     if (formKey.currentState!.validate()) {
       String title = titleController.text;
       String note = noteController.text;
+      ////way 1
       int response=await sqldb.insertData(
        """
         INSERT INTO notes ('note','title') VALUES ('$note','$title')
        """
       );
+      ////way 2
+      // int response=await sqldb.insert(
+      //  "notes",{
+      //   "note":note,
+      //   "title":title
+      //  }
+      // );
       log(response.toString());
       if(response>0){
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Homescreen(),),(route) => false,);

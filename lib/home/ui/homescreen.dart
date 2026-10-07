@@ -17,7 +17,10 @@ class _HomescreenState extends State<Homescreen> {
   List allNotes=[];
 
   Future <List<Map>> readData()async{
+    ////way 1
     List<Map> response =await sqldb.readData("SELECT * FROM notes");
+    ////way 2
+    //List<Map> response =await sqldb.read("notes");
     allNotes.addAll(response);
     isloading=false;
     if(mounted){
@@ -95,7 +98,10 @@ class _HomescreenState extends State<Homescreen> {
                               }
                               , icon: Icon(Icons.edit,color: Colors.blue,)),
                               IconButton(onPressed: ()async{
-                                int response=await sqldb.deleteData("DELETE FROM notes WHERE id=${allNotes[index]["id"]}");
+                                ////way 1
+                                // int response=await sqldb.deleteData("DELETE FROM notes WHERE id=${allNotes[index]["id"]}");
+                                ////way 2
+                                int response=await sqldb.delete("notes","id=${allNotes[index]['id']}");
                                 if(response>0){
                                   log("note deleted");
                                   setState(() {
