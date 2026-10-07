@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:sqflite_course/home/ui/addnotesscreen.dart';
+import 'package:sqflite_course/home/ui/editnotescreen.dart';
 import 'package:sqflite_course/sqldb.dart';
 
 class Homescreen extends StatefulWidget {
@@ -86,16 +87,25 @@ class _HomescreenState extends State<Homescreen> {
                           subtitle: Text(
                             allNotes[index]["note"] ?? "No Note",
                           ),
-                          trailing: IconButton(onPressed: ()async{
-                            int response=await sqldb.deleteData("DELETE FROM notes WHERE id=${allNotes[index]["id"]}");
-                            if(response>0){
-                              log("note deleted");
-                              setState(() {
-                                allNotes.removeWhere((element) => element['id']==allNotes[index]['id'],);
-                              });
-                            }
-                          }
-                          , icon: Icon(Icons.delete,color: Colors.red,)),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(onPressed: ()async{
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => Editnotescreen(id: allNotes[index]['id'],note: allNotes[index]['note'],title: allNotes[index]['title'],),));
+                              }
+                              , icon: Icon(Icons.edit,color: Colors.blue,)),
+                              IconButton(onPressed: ()async{
+                                int response=await sqldb.deleteData("DELETE FROM notes WHERE id=${allNotes[index]["id"]}");
+                                if(response>0){
+                                  log("note deleted");
+                                  setState(() {
+                                    allNotes.removeWhere((element) => element['id']==allNotes[index]['id'],);
+                                  });
+                                }
+                              }
+                              , icon: Icon(Icons.delete,color: Colors.red,)),
+                            ],
+                          ),
                         ),
                       );
                     },

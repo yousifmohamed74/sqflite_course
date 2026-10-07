@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:sqflite_course/home/ui/homescreen.dart';
 import 'package:sqflite_course/sqldb.dart';
 
-class Addnotesscreen extends StatefulWidget {
-  const Addnotesscreen({super.key});
+class Editnotescreen extends StatefulWidget {
+  final id;
+  final note;
+  final title;
+  const Editnotescreen({super.key,required this.id,required this.note,required this.title});
 
   @override
-  State<Addnotesscreen> createState() => _AddnotesscreenState();
+  State<Editnotescreen> createState() => _EditnotescreenState();
 }
 
-class _AddnotesscreenState extends State<Addnotesscreen> {
+class _EditnotescreenState extends State<Editnotescreen> {
   Sqldb sqldb=Sqldb();
   // Form key
   final formKey = GlobalKey<FormState>();
@@ -19,7 +22,7 @@ class _AddnotesscreenState extends State<Addnotesscreen> {
   // Controllers
   final titleController = TextEditingController();
   final noteController = TextEditingController();
-
+  
   @override
   void dispose() {
     titleController.dispose();
@@ -27,14 +30,17 @@ class _AddnotesscreenState extends State<Addnotesscreen> {
     super.dispose();
   }
 
-  Future<int> saveNote() async{
+  Future<int> saveEditedNote() async{
     
     if (formKey.currentState!.validate()) {
       String title = titleController.text;
       String note = noteController.text;
-      int response=await sqldb.insertData(
+      int response=await sqldb.updateData(
        """
-        INSERT INTO notes ('note','title') VALUES ('$note','$title')
+        UPDATE notes SET 
+        note ="${noteController.text}", 
+        title="${titleController.text}"
+        WHERE id=${widget.id}
        """
       );
       log(response.toString());
@@ -45,7 +51,13 @@ class _AddnotesscreenState extends State<Addnotesscreen> {
     }
     return 0;
   }
-
+  @override
+  void initState() {
+    titleController.text=widget.title;
+    noteController.text=widget.note;
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -55,7 +67,7 @@ class _AddnotesscreenState extends State<Addnotesscreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("ADD Notes"),
+          title: Text("Edit Note"),
           backgroundColor: Colors.blue,
         ),
         body: Padding(
@@ -103,7 +115,7 @@ class _AddnotesscreenState extends State<Addnotesscreen> {
                   const SizedBox(height: 20),
           
                   ElevatedButton(
-                    onPressed:() => saveNote(),
+                    onPressed:() => saveEditedNote(),
                     child: const Text('Save Note'),
                   ),
                 ],
