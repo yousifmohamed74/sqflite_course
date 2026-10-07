@@ -19,11 +19,12 @@ class Sqldb {
   Future<Database> initDb()async{
     String databasepath= await getDatabasesPath();
     String path=  join(databasepath,'sqflitecourse.db');
-    Database mydb= await openDatabase(path,onCreate: _onCreate, version: 1,onUpgrade: _onUpgrade);
+    Database mydb= await openDatabase(path,onCreate: _onCreate, version: 3,onUpgrade: _onUpgrade);
     return mydb;
   }
 
   dynamic _onUpgrade(Database db,int oldversion,int newversion)async{
+    await db.execute("ALTER TABLE notes ADD COLUMN title TEXT");
    log("_onUpgrade====================================");
   }
 
@@ -63,5 +64,10 @@ class Sqldb {
     int response = await mydb!.rawDelete(sql);
     return response;
   }
-
+  
+  void deleteMyDataBase()async{
+    String databasepath= await getDatabasesPath();
+    String path=  join(databasepath,'sqflitecourse.db');
+    await deleteDatabase(path);
+  }
 }

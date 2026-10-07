@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:sqflite_course/home/ui/addnotesscreen.dart';
 import 'package:sqflite_course/sqldb.dart';
 
 class Homescreen extends StatefulWidget {
@@ -11,12 +12,108 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   Sqldb sqldb=Sqldb();
+  bool isloading=true;
+  List allNotes=[];
+
+  Future <List<Map>> readData()async{
+    List<Map> response =await sqldb.readData("SELECT * FROM notes");
+    allNotes.addAll(response);
+    isloading=false;
+    if(mounted){
+      setState(() {
+        
+      });
+    }
+    return response;
+  }
+
+  @override
+  void initState() {
+    readData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Addnotesscreen(),));
+      }, child: Icon(Icons.add),),
+
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Notes"),
+        backgroundColor: Colors.blue,
+      ),
+      
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            // SizedBox(
+            //   height: 50,
+            //   width: double.infinity,
+            //   child: MaterialButton(
+            //     color: Colors.red,
+            //     textColor: Colors.white,
+            //     onPressed: () async {
+            //       sqldb.deleteMyDataBase();
+
+            //       log("Data Base Deleted");
+            //     },
+            //     child: const Text("Delete All Notes"),
+            //   ),
+            // ),
+
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: 
+              isloading?
+              Center(child: CircularProgressIndicator(),):
+              
+                 ListView.builder(
+                    itemCount: allNotes.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                            allNotes[index]["title"] ?? "No Title",
+                            style: const TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          subtitle: Text(
+                            allNotes[index]["note"] ?? "No Note",
+                          ),
+                          trailing: IconButton(onPressed: ()async{
+                            int response=await sqldb.deleteData("DELETE FROM notes WHERE id=${allNotes[index]["id"]}");
+                            if(response>0){
+                              log("note deleted");
+                              setState(() {
+                                allNotes.removeWhere((element) => element['id']==allNotes[index]['id'],);
+                              });
+                            }
+                          }
+                          , icon: Icon(Icons.delete,color: Colors.red,)),
+                        ),
+                      );
+                    },
+                 ),
+                
+              
+            ),
+          ],
+        ),
+      ),
+    
+    );
+  }
+}
+
+
+/*
+body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -66,6 +163,5 @@ class _HomescreenState extends State<Homescreen> {
           ],
         ),
       ),
-    );
-  }
-}
+    
+*/ 
