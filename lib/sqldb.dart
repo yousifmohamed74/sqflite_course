@@ -33,7 +33,8 @@ class Sqldb {
       '''
       CREATE TABLE "notes"(
         "id" INTEGER PRIMARY KEY  AUTOINCREMENT,
-        "note" TEXT NOT NULL
+        "note" TEXT NOT NULL,
+        "title" TEXT
       )  
       '''     
     );
